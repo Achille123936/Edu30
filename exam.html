@@ -1,0 +1,2653 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>EduBot Exams - Examens Éducatifs</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3a0ca3;
+            --accent-color: #7209b7;
+            --success-color: #4cc9f0;
+            --warning-color: #f72585;
+            --info-color: #4895ef;
+            --light-color: #f8f9fa;
+            --dark-color: #212529;
+            --exam-color: #3a0ca3;
+            --exam-secondary: #560bad;
+            --exam-accent: #7209b7;
+            --shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            --shadow-hover: 0 15px 30px rgba(0, 0, 0, 0.15);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            --gradient-primary: linear-gradient(135deg, #4361ee 0%, #3a0ca3 100%);
+            --gradient-secondary: linear-gradient(135deg, #7209b7 0%, #560bad 100%);
+            --gradient-exam: linear-gradient(135deg, #3a0ca3 0%, #4361ee 100%);
+            --gradient-card: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            --gradient-header: linear-gradient(135deg, #3a0ca3 0%, #4361ee 80%, #7209b7 100%);
+            --radius-small: 12px;
+            --radius-medium: 16px;
+            --radius-large: 24px;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e3e9f7 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 15px;
+            color: var(--dark-color);
+            -webkit-tap-highlight-color: transparent;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1400px;
+            background-color: white;
+            border-radius: var(--radius-large);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            margin-top: 15px;
+            animation: fadeIn 0.8s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Header amélioré */
+        .header {
+            background: var(--gradient-header);
+            color: white;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><path d="M20,20 Q50,0 80,20 T100,50 Q80,80 50,100 T20,80 Q0,50 20,20Z" fill="white" opacity="0.03"/></svg>');
+            background-size: 200px;
+            animation: float 20s infinite linear;
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0) translateX(0); }
+            100% { transform: translateY(-100px) translateX(100px); }
+        }
+        
+        .header-content {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        @media (min-width: 768px) {
+            .header-content {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+            }
+        }
+        
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .logo-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            flex-shrink: 0;
+            backdrop-filter: blur(5px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            transition: var(--transition);
+        }
+        
+        .logo-icon:hover {
+            transform: rotate(15deg) scale(1.1);
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        .logo-text h1 {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+            font-weight: 700;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .logo-text p {
+            font-size: 0.95rem;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+        
+        .admin-controls {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .admin-indicator {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px 18px;
+            border-radius: 25px;
+            font-size: 0.85rem;
+            display: none;
+            align-items: center;
+            gap: 8px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        /* Boutons améliorés */
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: var(--radius-small);
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.95rem;
+            white-space: nowrap;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 5px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.5);
+            opacity: 0;
+            border-radius: 100%;
+            transform: scale(1, 1) translate(-50%);
+            transform-origin: 50% 50%;
+        }
+        
+        .btn:focus:not(:active)::after {
+            animation: ripple 1s ease-out;
+        }
+        
+        @keyframes ripple {
+            0% { transform: scale(0, 0); opacity: 0.5; }
+            100% { transform: scale(20, 20); opacity: 0; }
+        }
+        
+        .btn-primary {
+            background: var(--gradient-exam);
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+        }
+        
+        .btn-warning {
+            background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+            color: white;
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            color: white;
+        }
+        
+        .btn-info {
+            background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+            color: white;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hover);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        /* Navigation améliorée */
+        .nav-container {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            margin-top: 10px;
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .nav-tabs {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .nav-tabs::-webkit-scrollbar {
+            height: 6px;
+        }
+        
+        .nav-tabs::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+        }
+        
+        .nav-tabs::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 3px;
+        }
+        
+        .nav-tab {
+            padding: 12px 20px;
+            background-color: rgba(255, 255, 255, 0.15);
+            color: white;
+            text-decoration: none;
+            border-radius: var(--radius-small);
+            transition: var(--transition);
+            font-size: 0.9rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .nav-tab::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .nav-tab:hover::before {
+            left: 100%;
+        }
+        
+        .nav-tab.active {
+            background-color: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+        
+        .nav-tab i {
+            font-size: 1.1rem;
+        }
+        
+        /* Main Content amélioré */
+        .main-content {
+            padding: 30px;
+        }
+        
+        .page-header {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        @media (min-width: 768px) {
+            .page-header {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+            }
+        }
+        
+        .page-title {
+            font-size: 2.2rem;
+            background: var(--gradient-exam);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .page-title::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 80px;
+            height: 4px;
+            background: var(--gradient-exam);
+            border-radius: 2px;
+        }
+        
+        .search-bar {
+            width: 100%;
+            max-width: 350px;
+            position: relative;
+        }
+        
+        .search-bar .form-input {
+            padding-left: 45px;
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 50px;
+            transition: var(--transition);
+        }
+        
+        .search-bar .form-input:focus {
+            background: white;
+            border-color: var(--exam-color);
+            box-shadow: 0 0 0 3px rgba(58, 12, 163, 0.1);
+        }
+        
+        .search-bar i {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6c757d;
+            z-index: 2;
+        }
+        
+        /* Filtres de catégories */
+        .category-filters {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 35px;
+            flex-wrap: wrap;
+            justify-content: center;
+            position: relative;
+        }
+        
+        .filter-btn {
+            padding: 10px 20px;
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 600;
+            font-size: 0.9rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .filter-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient-exam);
+            opacity: 0;
+            transition: var(--transition);
+            z-index: 1;
+        }
+        
+        .filter-btn span {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .filter-btn.active, .filter-btn:active {
+            background: var(--gradient-exam);
+            color: white;
+            border-color: var(--exam-color);
+            box-shadow: 0 5px 15px rgba(58, 12, 163, 0.2);
+        }
+        
+        .filter-btn:hover:not(.active) {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-color: var(--exam-color);
+        }
+        
+        /* Grille d'examens améliorée */
+        .exams-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        @media (min-width: 480px) {
+            .exams-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (min-width: 768px) {
+            .exams-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        
+        @media (min-width: 1200px) {
+            .exams-grid {
+                grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            }
+        }
+        
+        .exam-card {
+            background: var(--gradient-card);
+            border-radius: var(--radius-medium);
+            padding: 0;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            border: 2px solid transparent;
+            overflow: hidden;
+            position: relative;
+            animation: fadeInUp 0.6s ease-out;
+            animation-fill-mode: both;
+        }
+        
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .exam-card:nth-child(2) { animation-delay: 0.1s; }
+        .exam-card:nth-child(3) { animation-delay: 0.2s; }
+        .exam-card:nth-child(4) { animation-delay: 0.3s; }
+        .exam-card:nth-child(5) { animation-delay: 0.4s; }
+        .exam-card:nth-child(n+6) { animation-delay: 0.5s; }
+        
+        .exam-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-hover);
+            border-color: rgba(58, 12, 163, 0.2);
+        }
+        
+        .exam-header {
+            height: 180px;
+            background: var(--gradient-exam);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .exam-header::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
+        }
+        
+        .exam-content {
+            padding: 20px;
+        }
+        
+        .exam-category {
+            display: inline-block;
+            padding: 6px 15px;
+            background: #f8f9fa;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-bottom: 12px;
+            color: var(--exam-color);
+            font-weight: 600;
+            border: 1px solid rgba(58, 12, 163, 0.2);
+        }
+        
+        .exam-title {
+            font-size: 1.3rem;
+            margin-bottom: 12px;
+            color: var(--dark-color);
+            font-weight: 700;
+        }
+        
+        .exam-description {
+            color: #6c757d;
+            margin-bottom: 20px;
+            line-height: 1.5;
+            font-size: 0.95rem;
+            min-height: 60px;
+        }
+        
+        .exam-meta {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            color: #6c757d;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #f1f3f5;
+        }
+        
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .meta-item i {
+            color: var(--exam-color);
+            font-size: 1.1rem;
+        }
+        
+        .exam-actions {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .start-btn {
+            flex: 1;
+            padding: 12px;
+            background: var(--gradient-exam);
+            color: white;
+            border: none;
+            border-radius: var(--radius-small);
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-size: 0.95rem;
+        }
+        
+        .start-btn:hover {
+            background: var(--gradient-secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(58, 12, 163, 0.3);
+        }
+        
+        .admin-exam-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 15px;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: var(--transition);
+        }
+        
+        .exam-card:hover .admin-exam-actions {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .action-btn {
+            padding: 10px 15px;
+            border: none;
+            border-radius: var(--radius-small);
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+            justify-content: center;
+            font-weight: 600;
+        }
+        
+        .edit-btn {
+            background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+            color: white;
+        }
+        
+        .edit-btn:hover {
+            background: #138496;
+            transform: translateY(-2px);
+        }
+        
+        .delete-btn {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+            color: white;
+        }
+        
+        .delete-btn:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+        }
+        
+        /* Admin Exam Form */
+        .admin-form {
+            background: white;
+            border-radius: var(--radius-medium);
+            padding: 30px;
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+            display: none;
+            animation: fadeInUp 0.5s ease-out;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: var(--dark-color);
+            font-size: 0.95rem;
+        }
+        
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #e9ecef;
+            border-radius: var(--radius-small);
+            transition: var(--transition);
+            font-family: inherit;
+            font-size: 1rem;
+            background: #f8f9fa;
+        }
+        
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            border-color: var(--exam-color);
+            outline: none;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(58, 12, 163, 0.1);
+        }
+        
+        .form-textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+        
+        @media (min-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        
+        .question-item {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: var(--radius-medium);
+            margin-bottom: 20px;
+            border-left: 4px solid var(--info-color);
+            transition: var(--transition);
+        }
+        
+        .question-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .question-actions {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .options-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+        
+        @media (min-width: 480px) {
+            .options-list {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        
+        .option-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background: white;
+            border-radius: var(--radius-small);
+            transition: var(--transition);
+        }
+        
+        .option-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        /* Exam Modal */
+        .exam-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            backdrop-filter: blur(5px);
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        .exam-modal-content {
+            background: white;
+            border-radius: var(--radius-large);
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 1000px;
+            max-height: 90vh;
+            overflow-y: auto;
+            transform: scale(0.9);
+            animation: modalAppear 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        
+        @keyframes modalAppear {
+            to { transform: scale(1); }
+        }
+        
+        .exam-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #f1f3f5;
+        }
+        
+        .exam-modal-title {
+            font-size: 1.8rem;
+            color: var(--dark-color);
+            font-weight: 700;
+        }
+        
+        .close-modal {
+            background: #f8f9fa;
+            border: none;
+            font-size: 1.8rem;
+            cursor: pointer;
+            color: #6c757d;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+        
+        .close-modal:hover {
+            background: var(--exam-color);
+            color: white;
+            transform: rotate(90deg);
+        }
+        
+        .exam-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 25px;
+            padding: 20px;
+            background: var(--gradient-exam);
+            border-radius: var(--radius-medium);
+            flex-wrap: wrap;
+            gap: 15px;
+            color: white;
+        }
+        
+        .stat-item {
+            text-align: center;
+            flex: 1;
+            min-width: 100px;
+        }
+        
+        .stat-value {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 5px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            font-weight: 500;
+        }
+        
+        .timer-container {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+        
+        .timer-progress {
+            height: 100%;
+            background: white;
+            width: 100%;
+            border-radius: 4px;
+            transition: width 1s linear;
+        }
+        
+        .question-container {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: var(--radius-medium);
+            margin-bottom: 20px;
+            border-left: 5px solid var(--exam-color);
+        }
+        
+        .question-text {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+        
+        .question-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: var(--radius-small);
+            margin-bottom: 20px;
+            display: block;
+        }
+        
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+        
+        @media (min-width: 480px) {
+            .options-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        
+        .option-btn {
+            padding: 18px 20px;
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: var(--radius-small);
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: left;
+            font-size: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .option-btn:hover {
+            border-color: var(--exam-color);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .option-btn.selected {
+            background: #e7f3ff;
+            border-color: var(--exam-color);
+            color: var(--exam-color);
+        }
+        
+        .option-btn.correct {
+            background: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+            animation: pulseCorrect 0.5s;
+        }
+        
+        @keyframes pulseCorrect {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .option-btn.incorrect {
+            background: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+            animation: shake 0.5s;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+        
+        .exam-controls {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+        }
+        
+        /* Result Modal */
+        .result-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1001;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            backdrop-filter: blur(5px);
+        }
+        
+        .result-content {
+            background: white;
+            border-radius: var(--radius-large);
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+            transform: scale(0.9);
+            animation: modalAppear 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        
+        .result-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+        
+        .result-icon.success {
+            color: #28a745;
+        }
+        
+        .result-icon.warning {
+            color: #ffc107;
+        }
+        
+        .result-icon.danger {
+            color: #dc3545;
+        }
+        
+        .result-title {
+            font-size: 2rem;
+            margin-bottom: 15px;
+            color: var(--dark-color);
+            font-weight: 700;
+        }
+        
+        .result-score {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin: 20px 0;
+            background: var(--gradient-exam);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .result-message {
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+            color: #6c757d;
+            line-height: 1.6;
+        }
+        
+        .result-details {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: var(--radius-medium);
+            margin-bottom: 30px;
+            text-align: left;
+        }
+        
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .detail-item:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+        
+        .detail-label {
+            font-weight: 600;
+            color: #6c757d;
+        }
+        
+        .detail-value {
+            font-weight: 700;
+            color: var(--dark-color);
+        }
+        
+        /* Modal de confirmation */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            backdrop-filter: blur(5px);
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: var(--radius-large);
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 500px;
+            transform: scale(0.9);
+            animation: modalAppear 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        
+        .modal-title {
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--dark-color);
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            margin-top: 25px;
+        }
+        
+        /* Badge pour nouveaux examens */
+        .new-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            z-index: 2;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(255, 193, 7, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 193, 7, 0); }
+        }
+        
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            padding: 15px 25px;
+            background: var(--gradient-exam);
+            color: white;
+            border-radius: var(--radius-small);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            z-index: 1001;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s;
+        }
+        
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        
+        .toast.success {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        }
+        
+        .toast.error {
+            background: linear-gradient(135deg, #dc3545 0%, #e63946 100%);
+        }
+        
+        .toast.warning {
+            background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+        }
+        
+        /* Responsive améliorations */
+        @media (max-width: 480px) {
+            .btn {
+                padding: 10px 15px;
+                font-size: 0.9rem;
+            }
+            
+            .nav-tab {
+                padding: 10px 15px;
+                font-size: 0.85rem;
+            }
+            
+            .exam-header {
+                height: 150px;
+                font-size: 2.5rem;
+            }
+            
+            .exam-title {
+                font-size: 1.2rem;
+            }
+            
+            .main-content {
+                padding: 20px 15px;
+            }
+            
+            .page-title {
+                font-size: 1.8rem;
+            }
+            
+            .exam-meta {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* Touch-friendly improvements */
+        button, input, select, textarea {
+            font-size: 16px;
+        }
+        
+        .touch-feedback:active {
+            transform: scale(0.97);
+        }
+        
+        /* Footer amélioré */
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: #6c757d;
+            font-size: 0.9rem;
+            border-top: 1px solid #f1f3f5;
+            margin-top: 30px;
+        }
+        
+        .footer a {
+            color: var(--exam-color);
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-content">
+                <div class="logo-section">
+                    <div class="logo-icon">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <div class="logo-text">
+                        <h1>EduBot Exams</h1>
+                        <p>Évaluez vos connaissances</p>
+                    </div>
+                </div>
+                
+                <div class="admin-controls">
+                    <div class="admin-indicator" id="admin-indicator">
+                        <i class="fas fa-user-shield"></i> Mode Admin
+                    </div>
+                    <button class="btn btn-secondary touch-feedback" id="toggle-admin-form">
+                        <i class="fas fa-plus"></i> Ajouter examen
+                    </button>
+                    <button class="btn btn-danger touch-feedback" id="admin-logout" style="display: none;">
+                        <i class="fas fa-sign-out-alt"></i> Déconnexion
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Navigation -->
+            <div class="nav-container">
+                <div class="nav-tabs">
+                    <a href="index.html" class="nav-tab">
+                        <i class="fas fa-home"></i> Accueil
+                    </a>
+                    <a href="quiz.html" class="nav-tab">
+                        <i class="fas fa-brain"></i> Quiz
+                    </a>
+                    <a href="exercises.html" class="nav-tab">
+                        <i class="fas fa-pen-fancy"></i> Exercices
+                    </a>
+                    <a href="games.html" class="nav-tab">
+                        <i class="fas fa-gamepad"></i> Jeux
+                    </a>
+                    <a href="formulas.html" class="nav-tab">
+                        <i class="fas fa-square-root-variable"></i> Formules
+                    </a>
+                    <a href="exam.html" class="nav-tab active">
+                        <i class="fas fa-graduation-cap"></i> Examens
+                    </a>
+                    <a href="chat.html" class="nav-tab">
+                        <i class="fas fa-comments"></i> Assistant IA
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="page-header">
+                <h1 class="page-title">Examens Éducatifs</h1>
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="exam-search" placeholder="Rechercher un examen..." class="form-input">
+                </div>
+            </div>
+            
+            <div class="category-filters">
+                <button class="filter-btn active" data-category="all">
+                    <span>Tous</span>
+                </button>
+                <button class="filter-btn" data-category="mathematiques">
+                    <span>Mathématiques</span>
+                </button>
+                <button class="filter-btn" data-category="francais">
+                    <span>Français</span>
+                </button>
+                <button class="filter-btn" data-category="sciences">
+                    <span>Sciences</span>
+                </button>
+                <button class="filter-btn" data-category="histoire">
+                    <span>Histoire</span>
+                </button>
+                <button class="filter-btn" data-category="geographie">
+                    <span>Géographie</span>
+                </button>
+                <button class="filter-btn" data-category="anglais">
+                    <span>Anglais</span>
+                </button>
+                <button class="filter-btn" data-category="informatique">
+                    <span>Informatique</span>
+                </button>
+                <button class="filter-btn" data-category="economie">
+                    <span>Économie</span>
+                </button>
+                <button class="filter-btn" data-category="philosophie">
+                    <span>Philosophie</span>
+                </button>
+            </div>
+            
+            <!-- Admin Exam Form -->
+            <div class="admin-form" id="admin-exam-form">
+                <h2 id="form-title">Ajouter un nouvel examen</h2>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Titre de l'examen</label>
+                        <input type="text" class="form-input" id="exam-title" placeholder="Entrez le titre de l'examen">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Catégorie</label>
+                        <select class="form-select" id="exam-category">
+                            <option value="mathematiques">Mathématiques</option>
+                            <option value="francais">Français</option>
+                            <option value="sciences">Sciences</option>
+                            <option value="histoire">Histoire</option>
+                            <option value="geographie">Géographie</option>
+                            <option value="anglais">Anglais</option>
+                            <option value="informatique">Informatique</option>
+                            <option value="economie">Économie</option>
+                            <option value="philosophie">Philosophie</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Description</label>
+                    <textarea class="form-textarea" id="exam-description" placeholder="Décrivez l'examen"></textarea>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Niveau</label>
+                        <select class="form-select" id="exam-level">
+                            <option value="debutant">Débutant</option>
+                            <option value="intermediaire">Intermédiaire</option>
+                            <option value="avance">Avancé</option>
+                            <option value="expert">Expert</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Durée (minutes)</label>
+                        <input type="number" class="form-input" id="exam-duration" placeholder="Ex: 60">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Nombre de questions</label>
+                        <input type="number" class="form-input" id="exam-question-count" placeholder="Ex: 20">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Note de passage (%)</label>
+                        <input type="number" class="form-input" id="exam-passing-grade" placeholder="Ex: 70" min="0" max="100">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Instructions</label>
+                    <textarea class="form-textarea" id="exam-instructions" placeholder="Instructions pour l'examen"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Questions de l'examen</label>
+                    <div id="questions-container">
+                        <!-- Questions will be added here dynamically -->
+                    </div>
+                    <button type="button" class="btn btn-secondary touch-feedback" id="add-question-btn">
+                        <i class="fas fa-plus"></i> Ajouter une question
+                    </button>
+                </div>
+                
+                <div class="form-actions">
+                    <button class="btn btn-secondary touch-feedback" id="cancel-exam-form">Annuler</button>
+                    <button class="btn btn-primary touch-feedback" id="save-exam">Sauvegarder</button>
+                </div>
+            </div>
+            
+            <!-- Exams Grid -->
+            <div class="exams-grid" id="exams-grid">
+                <!-- Exams will be loaded here dynamically -->
+            </div>
+            
+            <!-- Footer -->
+            <div class="footer">
+                <p>EduBot Exams &copy; 2023 - Tous droits réservés | <a href="#">Politique de confidentialité</a> | <a href="#">Conditions d'utilisation</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Exam Modal -->
+    <div class="exam-modal" id="exam-modal">
+        <div class="exam-modal-content">
+            <div class="exam-modal-header">
+                <h2 class="exam-modal-title" id="modal-exam-title">Examen de Mathématiques</h2>
+                <button class="close-modal touch-feedback" id="close-exam-modal">&times;</button>
+            </div>
+            
+            <div class="exam-stats">
+                <div class="stat-item">
+                    <div class="stat-value" id="score-value">0</div>
+                    <div class="stat-label">Score</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="question-count">1/20</div>
+                    <div class="stat-label">Question</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="timer-value">60:00</div>
+                    <div class="stat-label">Temps restant</div>
+                    <div class="timer-container">
+                        <div class="timer-progress" id="timer-progress"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="exam-area" id="exam-area">
+                <!-- Exam content will be loaded here dynamically -->
+            </div>
+            
+            <div class="exam-controls">
+                <button class="btn btn-secondary touch-feedback" id="prev-question">
+                    <i class="fas fa-arrow-left"></i> Précédent
+                </button>
+                <button class="btn btn-info touch-feedback" id="mark-question">
+                    <i class="far fa-bookmark"></i> Marquer
+                </button>
+                <button class="btn btn-primary touch-feedback" id="next-question">
+                    Suivant <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Result Modal -->
+    <div class="result-modal" id="result-modal">
+        <div class="result-content">
+            <div class="result-icon success" id="result-icon">
+                <i class="fas fa-trophy"></i>
+            </div>
+            <h2 class="result-title" id="result-title">Examen Réussi !</h2>
+            <div class="result-score" id="result-score">85%</div>
+            <p class="result-message" id="result-message">Félicitations ! Vous avez réussi l'examen avec succès.</p>
+            
+            <div class="result-details">
+                <div class="detail-item">
+                    <span class="detail-label">Note obtenue:</span>
+                    <span class="detail-value" id="detail-score">17/20</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Note de passage:</span>
+                    <span class="detail-value" id="detail-passing">14/20</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Temps utilisé:</span>
+                    <span class="detail-value" id="detail-time">45:30</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Questions correctes:</span>
+                    <span class="detail-value" id="detail-correct">17</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Questions incorrectes:</span>
+                    <span class="detail-value" id="detail-incorrect">3</span>
+                </div>
+            </div>
+            
+            <div class="exam-controls">
+                <button class="btn btn-secondary touch-feedback" id="review-exam">
+                    <i class="fas fa-chart-bar"></i> Voir les réponses
+                </button>
+                <button class="btn btn-primary touch-feedback" id="close-result">
+                    <i class="fas fa-check"></i> Terminer
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Login Modal -->
+    <div class="modal" id="admin-login-modal">
+        <div class="modal-content">
+            <h3 class="modal-title">Connexion Administrateur</h3>
+            <div class="form-group">
+                <label class="form-label" for="admin-username">Nom d'utilisateur</label>
+                <input type="text" class="form-input" id="admin-username" placeholder="Entrez votre nom d'utilisateur">
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="admin-password">Mot de passe</label>
+                <input type="password" class="form-input" id="admin-password" placeholder="Entrez votre mot de passe">
+            </div>
+            <button class="btn btn-primary touch-feedback" id="admin-login-btn" style="width: 100%;">
+                <i class="fas fa-sign-in-alt"></i> Se connecter
+            </button>
+            <div class="modal-actions">
+                <button class="btn btn-secondary touch-feedback" id="cancel-admin-login">
+                    Annuler
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal" id="delete-modal">
+        <div class="modal-content">
+            <h3 class="modal-title">Confirmer la suppression</h3>
+            <p>Êtes-vous sûr de vouloir supprimer cet examen ? Cette action est irréversible.</p>
+            <div class="modal-actions">
+                <button class="btn btn-secondary touch-feedback" id="cancel-delete">Annuler</button>
+                <button class="btn btn-danger touch-feedback" id="confirm-delete">Supprimer</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Éléments DOM
+            const examsGrid = document.getElementById('exams-grid');
+            const adminIndicator = document.getElementById('admin-indicator');
+            const adminLogoutBtn = document.getElementById('admin-logout');
+            const adminLoginModal = document.getElementById('admin-login-modal');
+            const adminLoginBtn = document.getElementById('admin-login-btn');
+            const cancelAdminLogin = document.getElementById('cancel-admin-login');
+            const adminUsername = document.getElementById('admin-username');
+            const adminPassword = document.getElementById('admin-password');
+            const toggleAdminFormBtn = document.getElementById('toggle-admin-form');
+            const adminExamForm = document.getElementById('admin-exam-form');
+            const cancelExamFormBtn = document.getElementById('cancel-exam-form');
+            const saveExamBtn = document.getElementById('save-exam');
+            const addQuestionBtn = document.getElementById('add-question-btn');
+            const questionsContainer = document.getElementById('questions-container');
+            const examModal = document.getElementById('exam-modal');
+            const closeExamModal = document.getElementById('close-exam-modal');
+            const filterBtns = document.querySelectorAll('.filter-btn');
+            const examSearch = document.getElementById('exam-search');
+            const deleteModal = document.getElementById('delete-modal');
+            const cancelDeleteBtn = document.getElementById('cancel-delete');
+            const confirmDeleteBtn = document.getElementById('confirm-delete');
+            const toast = document.getElementById('toast');
+            const resultModal = document.getElementById('result-modal');
+            const closeResultBtn = document.getElementById('close-result');
+            const reviewExamBtn = document.getElementById('review-exam');
+
+            // Variables
+            let isAdminLoggedIn = localStorage.getItem('adminLoggedIn') === 'true';
+            let currentEditingExam = null;
+            let exams = JSON.parse(localStorage.getItem('educationalExams')) || [];
+            let currentExam = null;
+            let currentQuestionIndex = 0;
+            let userAnswers = [];
+            let markedQuestions = [];
+            let score = 0;
+            let timerInterval = null;
+            let timeLeft = 0;
+            let examStartTime = null;
+
+            // Informations de connexion administrateur
+            const adminCredentials = {
+                username: "admin",
+                password: "admin123"
+            };
+
+            // Examens par défaut
+            const defaultExams = [
+                {
+                    id: 1,
+                    title: "Mathématiques - Niveau Bac",
+                    category: "mathematiques",
+                    description: "Examen complet de mathématiques couvrant l'algèbre, la géométrie et l'analyse.",
+                    level: "intermediaire",
+                    duration: 120,
+                    questionCount: 20,
+                    passingGrade: 70,
+                    instructions: "Lisez attentivement chaque question. Vous avez 2 heures pour compléter l'examen. Les calculatrices sont autorisées.",
+                    questions: [
+                        {
+                            question: "Quelle est la dérivée de f(x) = 3x² + 2x - 5 ?",
+                            options: ["6x + 2", "3x + 2", "6x² + 2", "3x² + 2"],
+                            correctAnswer: 0,
+                            explanation: "La dérivée de 3x² est 6x, la dérivée de 2x est 2, et la dérivée d'une constante est 0."
+                        },
+                        {
+                            question: "Quelle est la solution de l'équation 2x + 5 = 15 ?",
+                            options: ["x = 5", "x = 10", "x = 7.5", "x = 8"],
+                            correctAnswer: 0,
+                            explanation: "2x + 5 = 15 → 2x = 10 → x = 5"
+                        },
+                        {
+                            question: "Quelle est la valeur de π arrondie à deux décimales ?",
+                            options: ["3.14", "3.16", "3.12", "3.18"],
+                            correctAnswer: 0,
+                            explanation: "π ≈ 3.14159, donc arrondi à deux décimales cela donne 3.14"
+                        }
+                    ],
+                    isNew: true
+                },
+                {
+                    id: 2,
+                    title: "Français - Grammaire et Orthographe",
+                    category: "francais",
+                    description: "Testez vos connaissances en grammaire française et orthographe.",
+                    level: "debutant",
+                    duration: 60,
+                    questionCount: 15,
+                    passingGrade: 60,
+                    instructions: "Choisissez la réponse correcte pour chaque question. Attention aux pièges courants !",
+                    questions: [
+                        {
+                            question: "Quelle est la conjugaison correcte : 'Ils _____ au marché hier.'",
+                            options: ["sont allés", "ont allé", "sont allé", "ont allés"],
+                            correctAnswer: 0,
+                            explanation: "Avec l'auxiliaire être, le participe passé s'accorde avec le sujet."
+                        },
+                        {
+                            question: "Quel est le pluriel de 'cheval' ?",
+                            options: ["chevaux", "chevals", "chevauxs", "chevales"],
+                            correctAnswer: 0,
+                            explanation: "Les mots en -al font généralement leur pluriel en -aux."
+                        },
+                        {
+                            question: "Quelle phrase est correcte ?",
+                            options: ["Je vais au cinéma.", "Je vais à le cinéma.", "Je vais en cinéma.", "Je vais dans cinéma."],
+                            correctAnswer: 0,
+                            explanation: "La préposition 'au' est la contraction de 'à le'."
+                        }
+                    ],
+                    isNew: false
+                },
+                {
+                    id: 3,
+                    title: "Sciences - Physique et Chimie",
+                    category: "sciences",
+                    description: "Examen couvrant les principes fondamentaux de la physique et de la chimie.",
+                    level: "intermediaire",
+                    duration: 90,
+                    questionCount: 18,
+                    passingGrade: 65,
+                    instructions: "Répondez aux questions de physique et chimie. Utilisez les formules fournies si nécessaire.",
+                    questions: [
+                        {
+                            question: "Quelle est la formule chimique de l'eau ?",
+                            options: ["H2O", "CO2", "O2", "NaCl"],
+                            correctAnswer: 0,
+                            explanation: "L'eau est composée de deux atomes d'hydrogène et d'un atome d'oxygène."
+                        },
+                        {
+                            question: "Quelle est l'unité de mesure de la force ?",
+                            options: ["Newton", "Joule", "Watt", "Pascal"],
+                            correctAnswer: 0,
+                            explanation: "Le Newton (N) est l'unité de mesure de la force dans le système international."
+                        },
+                        {
+                            question: "Quel gaz est le plus abondant dans l'atmosphère terrestre ?",
+                            options: ["Azote", "Oxygène", "Dioxyde de carbone", "Hydrogène"],
+                            correctAnswer: 0,
+                            explanation: "L'azote représente environ 78% de l'atmosphère terrestre."
+                        }
+                    ],
+                    isNew: true
+                },
+                {
+                    id: 4,
+                    title: "Histoire - XXe Siècle",
+                    category: "histoire",
+                    description: "Examen sur les événements majeurs du XXe siècle.",
+                    level: "avance",
+                    duration: 75,
+                    questionCount: 25,
+                    passingGrade: 75,
+                    instructions: "Chronologie et faits historiques du XXe siècle. Soyez précis dans vos réponses.",
+                    questions: [
+                        {
+                            question: "En quelle année a commencé la Première Guerre mondiale ?",
+                            options: ["1914", "1918", "1939", "1945"],
+                            correctAnswer: 0,
+                            explanation: "La Première Guerre mondiale a commencé le 28 juillet 1914."
+                        },
+                        {
+                            question: "Qui était le président des États-Unis pendant la Seconde Guerre mondiale ?",
+                            options: ["Franklin D. Roosevelt", "Harry Truman", "Winston Churchill", "Joseph Staline"],
+                            correctAnswer: 0,
+                            explanation: "Franklin D. Roosevelt était président des États-Unis de 1933 à 1945."
+                        },
+                        {
+                            question: "Quand a eu lieu la chute du mur de Berlin ?",
+                            options: ["1989", "1991", "1985", "1990"],
+                            correctAnswer: 0,
+                            explanation: "Le mur de Berlin est tombé le 9 novembre 1989."
+                        }
+                    ],
+                    isNew: false
+                },
+                {
+                    id: 5,
+                    title: "Géographie - Capitales du Monde",
+                    category: "geographie",
+                    description: "Testez vos connaissances sur les capitales des pays du monde.",
+                    level: "intermediaire",
+                    duration: 45,
+                    questionCount: 20,
+                    passingGrade: 70,
+                    instructions: "Identifiez la capitale correspondant à chaque pays. Bonne chance !",
+                    questions: [
+                        {
+                            question: "Quelle est la capitale du Canada ?",
+                            options: ["Ottawa", "Toronto", "Vancouver", "Montréal"],
+                            correctAnswer: 0,
+                            explanation: "Ottawa est la capitale du Canada depuis 1857."
+                        },
+                        {
+                            question: "Quelle est la capitale de l'Australie ?",
+                            options: ["Canberra", "Sydney", "Melbourne", "Perth"],
+                            correctAnswer: 0,
+                            explanation: "Canberra est la capitale de l'Australie, choisie comme compromis entre Sydney et Melbourne."
+                        },
+                        {
+                            question: "Quelle est la capitale du Brésil ?",
+                            options: ["Brasilia", "Rio de Janeiro", "São Paulo", "Salvador"],
+                            correctAnswer: 0,
+                            explanation: "Brasilia est la capitale du Brésil depuis 1960."
+                        }
+                    ],
+                    isNew: true
+                },
+                {
+                    id: 6,
+                    title: "Anglais - Grammaire Avancée",
+                    category: "anglais",
+                    description: "Examen d'anglais avancé testant la grammaire et le vocabulaire.",
+                    level: "avance",
+                    duration: 60,
+                    questionCount: 15,
+                    passingGrade: 80,
+                    instructions: "Complete the sentences with the correct grammatical forms. Time limit: 60 minutes.",
+                    questions: [
+                        {
+                            question: "If I _____ you, I would study more.",
+                            options: ["were", "was", "am", "be"],
+                            correctAnswer: 0,
+                            explanation: "In conditional sentences type II, we use 'were' for all persons."
+                        },
+                        {
+                            question: "She _____ to the store when I saw her.",
+                            options: ["was going", "went", "has gone", "goes"],
+                            correctAnswer: 0,
+                            explanation: "Past continuous is used for actions in progress at a specific time in the past."
+                        },
+                        {
+                            question: "By next year, I _____ English for 10 years.",
+                            options: ["will have been studying", "will study", "have studied", "studied"],
+                            correctAnswer: 0,
+                            explanation: "Future perfect continuous is used for actions that will continue up to a point in the future."
+                        }
+                    ],
+                    isNew: false
+                }
+            ];
+
+            // Initialisation
+            if (exams.length === 0) {
+                exams = defaultExams;
+                saveExams();
+            }
+            
+            checkAdminStatus();
+            setupEventListeners();
+            loadExams();
+            setupFilterButtons();
+
+            // Fonctions d'initialisation
+            function setupEventListeners() {
+                // Administration
+                toggleAdminFormBtn.addEventListener('click', toggleAdminForm);
+                adminLogoutBtn.addEventListener('click', adminLogout);
+                adminLoginBtn.addEventListener('click', adminLogin);
+                cancelAdminLogin.addEventListener('click', hideAdminLoginModal);
+                cancelExamFormBtn.addEventListener('click', hideAdminForm);
+                saveExamBtn.addEventListener('click', saveExam);
+                addQuestionBtn.addEventListener('click', addQuestion);
+
+                // Modal d'examen
+                closeExamModal.addEventListener('click', hideExamModal);
+
+                // Filtres et recherche
+                examSearch.addEventListener('input', filterExams);
+
+                // Modal de suppression
+                cancelDeleteBtn.addEventListener('click', hideDeleteModal);
+                confirmDeleteBtn.addEventListener('click', confirmDeleteExam);
+
+                // Modal de résultat
+                closeResultBtn.addEventListener('click', hideResultModal);
+                reviewExamBtn.addEventListener('click', reviewExam);
+
+                // Fermer les modals en cliquant à l'extérieur
+                adminLoginModal.addEventListener('click', function(e) {
+                    if (e.target === adminLoginModal) {
+                        hideAdminLoginModal();
+                    }
+                });
+                examModal.addEventListener('click', function(e) {
+                    if (e.target === examModal) {
+                        hideExamModal();
+                    }
+                });
+                resultModal.addEventListener('click', function(e) {
+                    if (e.target === resultModal) {
+                        hideResultModal();
+                    }
+                });
+                deleteModal.addEventListener('click', function(e) {
+                    if (e.target === deleteModal) {
+                        hideDeleteModal();
+                    }
+                });
+
+                // Ajouter la classe touch-feedback à tous les boutons
+                document.querySelectorAll('button').forEach(btn => {
+                    btn.classList.add('touch-feedback');
+                });
+                
+                // Entrée pour la recherche
+                examSearch.addEventListener('keyup', function(e) {
+                    if (e.key === 'Enter') {
+                        filterExams();
+                    }
+                });
+            }
+
+            function setupFilterButtons() {
+                filterBtns.forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        // Retirer la classe active de tous les boutons
+                        filterBtns.forEach(b => b.classList.remove('active'));
+                        // Ajouter la classe active au bouton cliqué
+                        this.classList.add('active');
+                        
+                        const category = this.getAttribute('data-category');
+                        filterExamsByCategory(category);
+                    });
+                });
+            }
+
+            function checkAdminStatus() {
+                if (isAdminLoggedIn) {
+                    adminIndicator.style.display = 'flex';
+                    adminLogoutBtn.style.display = 'flex';
+                    toggleAdminFormBtn.style.display = 'flex';
+                } else {
+                    adminIndicator.style.display = 'none';
+                    adminLogoutBtn.style.display = 'none';
+                    toggleAdminFormBtn.style.display = 'none';
+                    adminExamForm.style.display = 'none';
+                }
+            }
+
+            function showAdminLoginModal() {
+                adminLoginModal.style.display = 'flex';
+                adminUsername.value = '';
+                adminPassword.value = '';
+                adminUsername.focus();
+            }
+
+            function hideAdminLoginModal() {
+                adminLoginModal.style.display = 'none';
+            }
+
+            function adminLogin() {
+                const username = adminUsername.value;
+                const password = adminPassword.value;
+                
+                if (username === adminCredentials.username && password === adminCredentials.password) {
+                    isAdminLoggedIn = true;
+                    localStorage.setItem('adminLoggedIn', 'true');
+                    checkAdminStatus();
+                    hideAdminLoginModal();
+                    showToast('Connexion administrateur réussie !', 'success');
+                } else {
+                    showToast('Nom d\'utilisateur ou mot de passe incorrect.', 'error');
+                }
+            }
+
+            function adminLogout() {
+                isAdminLoggedIn = false;
+                localStorage.removeItem('adminLoggedIn');
+                checkAdminStatus();
+                hideAdminForm();
+                showToast('Déconnexion administrateur réussie.', 'success');
+            }
+
+            function toggleAdminForm() {
+                if (!isAdminLoggedIn) {
+                    showAdminLoginModal();
+                    return;
+                }
+                
+                if (adminExamForm.style.display === 'block') {
+                    hideAdminForm();
+                } else {
+                    showAdminForm();
+                }
+            }
+
+            function showAdminForm() {
+                adminExamForm.style.display = 'block';
+                currentEditingExam = null;
+                document.getElementById('form-title').textContent = 'Ajouter un nouvel examen';
+                resetExamForm();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+
+            function hideAdminForm() {
+                adminExamForm.style.display = 'none';
+                currentEditingExam = null;
+                resetExamForm();
+            }
+
+            function resetExamForm() {
+                document.getElementById('exam-title').value = '';
+                document.getElementById('exam-category').value = 'mathematiques';
+                document.getElementById('exam-description').value = '';
+                document.getElementById('exam-level').value = 'debutant';
+                document.getElementById('exam-duration').value = '';
+                document.getElementById('exam-question-count').value = '';
+                document.getElementById('exam-passing-grade').value = '70';
+                document.getElementById('exam-instructions').value = '';
+                questionsContainer.innerHTML = '';
+            }
+
+            function addQuestion() {
+                const questionId = Date.now();
+                const questionHTML = `
+                    <div class="question-item" data-id="${questionId}">
+                        <div class="question-header">
+                            <h4>Question</h4>
+                            <div class="question-actions">
+                                <button type="button" class="btn btn-danger delete-question-btn touch-feedback">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" class="form-input question-text" placeholder="Entrez la question">
+                        </div>
+                        <div class="form-group">
+                            <textarea class="form-textarea explanation-text" placeholder="Explication (optionnelle)"></textarea>
+                        </div>
+                        <div class="options-list">
+                            <div class="option-item">
+                                <input type="radio" name="correct-${questionId}" value="0" class="correct-option">
+                                <input type="text" class="form-input option-text" placeholder="Option 1">
+                            </div>
+                            <div class="option-item">
+                                <input type="radio" name="correct-${questionId}" value="1" class="correct-option">
+                                <input type="text" class="form-input option-text" placeholder="Option 2">
+                            </div>
+                            <div class="option-item">
+                                <input type="radio" name="correct-${questionId}" value="2" class="correct-option">
+                                <input type="text" class="form-input option-text" placeholder="Option 3">
+                            </div>
+                            <div class="option-item">
+                                <input type="radio" name="correct-${questionId}" value="3" class="correct-option">
+                                <input type="text" class="form-input option-text" placeholder="Option 4">
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                questionsContainer.insertAdjacentHTML('beforeend', questionHTML);
+                
+                // Ajouter l'événement de suppression pour cette question
+                const newQuestion = questionsContainer.querySelector(`[data-id="${questionId}"]`);
+                const deleteBtn = newQuestion.querySelector('.delete-question-btn');
+                deleteBtn.addEventListener('click', function() {
+                    newQuestion.remove();
+                });
+            }
+
+            function saveExam() {
+                const title = document.getElementById('exam-title').value.trim();
+                const category = document.getElementById('exam-category').value;
+                const description = document.getElementById('exam-description').value.trim();
+                const level = document.getElementById('exam-level').value;
+                const duration = parseInt(document.getElementById('exam-duration').value);
+                const questionCount = parseInt(document.getElementById('exam-question-count').value);
+                const passingGrade = parseInt(document.getElementById('exam-passing-grade').value);
+                const instructions = document.getElementById('exam-instructions').value.trim();
+                
+                if (!title || !description || !duration || !questionCount) {
+                    showToast('Veuillez remplir tous les champs obligatoires.', 'warning');
+                    return;
+                }
+                
+                // Récupérer les questions
+                const questions = [];
+                const questionItems = questionsContainer.querySelectorAll('.question-item');
+                
+                if (questionItems.length === 0) {
+                    showToast('Veuillez ajouter au moins une question.', 'warning');
+                    return;
+                }
+                
+                let hasError = false;
+                questionItems.forEach(item => {
+                    const questionText = item.querySelector('.question-text').value.trim();
+                    const explanation = item.querySelector('.explanation-text').value.trim();
+                    const optionInputs = item.querySelectorAll('.option-text');
+                    const correctOptionRadios = item.querySelectorAll('.correct-option');
+                    
+                    let correctAnswer = -1;
+                    const options = [];
+                    
+                    optionInputs.forEach((input, index) => {
+                        options.push(input.value.trim());
+                        if (correctOptionRadios[index].checked) {
+                            correctAnswer = index;
+                        }
+                    });
+                    
+                    if (!questionText || options.some(opt => !opt) || correctAnswer === -1) {
+                        hasError = true;
+                        return;
+                    }
+                    
+                    questions.push({
+                        question: questionText,
+                        options: options,
+                        correctAnswer: correctAnswer,
+                        explanation: explanation || null
+                    });
+                });
+                
+                if (hasError) {
+                    showToast('Veuillez remplir toutes les questions et options, et sélectionner la réponse correcte.', 'warning');
+                    return;
+                }
+                
+                const examData = {
+                    id: currentEditingExam ? currentEditingExam.id : Date.now(),
+                    title,
+                    category,
+                    description,
+                    level,
+                    duration,
+                    questionCount: questions.length,
+                    passingGrade,
+                    instructions,
+                    questions,
+                    isNew: !currentEditingExam // Nouvel examen seulement si on ne modifie pas un existant
+                };
+                
+                if (currentEditingExam) {
+                    // Mettre à jour l'examen existant
+                    const index = exams.findIndex(e => e.id === currentEditingExam.id);
+                    if (index !== -1) {
+                        exams[index] = examData;
+                    }
+                } else {
+                    // Ajouter un nouvel examen
+                    exams.push(examData);
+                }
+                
+                saveExams();
+                loadExams();
+                hideAdminForm();
+                showToast('Examen sauvegardé avec succès !', 'success');
+            }
+
+            function loadExams() {
+                examsGrid.innerHTML = '';
+                
+                // Mettre à jour l'état "isNew" pour les examens qui ont plus de 7 jours
+                const now = Date.now();
+                const sevenDays = 7 * 24 * 60 * 60 * 1000;
+                
+                exams.forEach(exam => {
+                    // Simuler que certains examens ne sont plus "nouveaux" après un certain temps
+                    if (exam.isNew && Math.random() > 0.5) {
+                        exam.isNew = false;
+                    }
+                    
+                    const examCard = document.createElement('div');
+                    examCard.className = 'exam-card';
+                    examCard.setAttribute('data-category', exam.category);
+                    
+                    const categoryNames = {
+                        'mathematiques': 'Mathématiques',
+                        'francais': 'Français',
+                        'sciences': 'Sciences',
+                        'histoire': 'Histoire',
+                        'geographie': 'Géographie',
+                        'anglais': 'Anglais',
+                        'informatique': 'Informatique',
+                        'economie': 'Économie',
+                        'philosophie': 'Philosophie'
+                    };
+                    
+                    const levelColors = {
+                        'debutant': '#28a745',
+                        'intermediaire': '#17a2b8',
+                        'avance': '#ffc107',
+                        'expert': '#dc3545'
+                    };
+                    
+                    const levelTexts = {
+                        'debutant': 'Débutant',
+                        'intermediaire': 'Intermédiaire',
+                        'avance': 'Avancé',
+                        'expert': 'Expert'
+                    };
+                    
+                    examCard.innerHTML = `
+                        <div class="exam-header">
+                            ${exam.isNew ? '<div class="new-badge">NOUVEAU</div>' : ''}
+                            <i class="fas fa-${getExamIcon(exam.category)}"></i>
+                        </div>
+                        <div class="exam-content">
+                            <span class="exam-category">${categoryNames[exam.category]}</span>
+                            <h3 class="exam-title">${exam.title}</h3>
+                            <p class="exam-description">${exam.description}</p>
+                            <div class="exam-meta">
+                                <div class="meta-item">
+                                    <i class="fas fa-signal"></i>
+                                    <span style="color: ${levelColors[exam.level]}; font-weight: 600;">${levelTexts[exam.level]}</span>
+                                </div>
+                                <div class="meta-item">
+                                    <i class="fas fa-clock"></i>
+                                    <span>${exam.duration} min</span>
+                                </div>
+                                <div class="meta-item">
+                                    <i class="fas fa-question-circle"></i>
+                                    <span>${exam.questionCount} questions</span>
+                                </div>
+                                <div class="meta-item">
+                                    <i class="fas fa-chart-line"></i>
+                                    <span>${exam.passingGrade}% de passage</span>
+                                </div>
+                            </div>
+                            <div class="exam-actions">
+                                <button class="start-btn touch-feedback" data-id="${exam.id}">
+                                    <i class="fas fa-play"></i> Démarrer l'examen
+                                </button>
+                            </div>
+                            ${isAdminLoggedIn ? `
+                            <div class="admin-exam-actions">
+                                <button class="action-btn edit-btn touch-feedback" data-id="${exam.id}">
+                                    <i class="fas fa-edit"></i> Modifier
+                                </button>
+                                <button class="action-btn delete-btn touch-feedback" data-id="${exam.id}">
+                                    <i class="fas fa-trash"></i> Supprimer
+                                </button>
+                            </div>
+                            ` : ''}
+                        </div>
+                    `;
+                    
+                    examsGrid.appendChild(examCard);
+                    
+                    // Ajouter les événements
+                    const startBtn = examCard.querySelector('.start-btn');
+                    const editBtn = examCard.querySelector('.edit-btn');
+                    const deleteBtn = examCard.querySelector('.delete-btn');
+                    
+                    startBtn.addEventListener('click', function() {
+                        const examId = parseInt(this.getAttribute('data-id'));
+                        startExam(examId);
+                    });
+                    
+                    if (isAdminLoggedIn) {
+                        if (editBtn) {
+                            editBtn.addEventListener('click', function() {
+                                const examId = parseInt(this.getAttribute('data-id'));
+                                editExam(examId);
+                            });
+                        }
+                        
+                        if (deleteBtn) {
+                            deleteBtn.addEventListener('click', function() {
+                                const examId = parseInt(this.getAttribute('data-id'));
+                                showDeleteModal(examId);
+                            });
+                        }
+                    }
+                });
+            }
+
+            function getExamIcon(category) {
+                const icons = {
+                    'mathematiques': 'calculator',
+                    'francais': 'book',
+                    'sciences': 'flask',
+                    'histoire': 'landmark',
+                    'geographie': 'globe-americas',
+                    'anglais': 'language',
+                    'informatique': 'laptop-code',
+                    'economie': 'chart-line',
+                    'philosophie': 'brain'
+                };
+                return icons[category] || 'graduation-cap';
+            }
+
+            function filterExams() {
+                const searchTerm = examSearch.value.toLowerCase();
+                const examCards = examsGrid.querySelectorAll('.exam-card');
+                let visibleCount = 0;
+                
+                examCards.forEach(card => {
+                    const title = card.querySelector('.exam-title').textContent.toLowerCase();
+                    const description = card.querySelector('.exam-description').textContent.toLowerCase();
+                    const category = card.querySelector('.exam-category').textContent.toLowerCase();
+                    
+                    if (title.includes(searchTerm) || description.includes(searchTerm) || category.includes(searchTerm)) {
+                        card.style.display = 'block';
+                        visibleCount++;
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+                
+                // Afficher un message si aucun examen n'est trouvé
+                if (visibleCount === 0 && searchTerm) {
+                    examsGrid.innerHTML = `
+                        <div style="grid-column: 1/-1; text-align: center; padding: 40px;">
+                            <i class="fas fa-search" style="font-size: 3rem; color: #ccc; margin-bottom: 20px;"></i>
+                            <h3 style="color: #6c757d; margin-bottom: 10px;">Aucun examen trouvé</h3>
+                            <p style="color: #adb5bd;">Essayez avec d'autres mots-clés</p>
+                        </div>
+                    `;
+                } else if (visibleCount === 0) {
+                    loadExams();
+                }
+            }
+
+            function filterExamsByCategory(category) {
+                const examCards = examsGrid.querySelectorAll('.exam-card');
+                let visibleCount = 0;
+                
+                examCards.forEach(card => {
+                    if (category === 'all' || card.getAttribute('data-category') === category) {
+                        card.style.display = 'block';
+                        visibleCount++;
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+                
+                // Afficher un message si aucun examen n'est trouvé
+                if (visibleCount === 0 && category !== 'all') {
+                    examsGrid.innerHTML = `
+                        <div style="grid-column: 1/-1; text-align: center; padding: 40px;">
+                            <i class="fas fa-folder-open" style="font-size: 3rem; color: #ccc; margin-bottom: 20px;"></i>
+                            <h3 style="color: #6c757d; margin-bottom: 10px;">Aucun examen dans cette catégorie</h3>
+                            <p style="color: #adb5bd;">Essayez une autre catégorie</p>
+                        </div>
+                    `;
+                }
+            }
+
+            function startExam(examId) {
+                currentExam = exams.find(e => e.id === examId);
+                if (!currentExam) return;
+                
+                currentQuestionIndex = 0;
+                userAnswers = new Array(currentExam.questions.length).fill(null);
+                markedQuestions = [];
+                score = 0;
+                examStartTime = new Date();
+                
+                document.getElementById('modal-exam-title').textContent = currentExam.title;
+                document.getElementById('score-value').textContent = score;
+                document.getElementById('question-count').textContent = `1/${currentExam.questions.length}`;
+                
+                showExamModal();
+                loadExamQuestion();
+                startTimer();
+            }
+
+            function showExamModal() {
+                examModal.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+            }
+
+            function hideExamModal() {
+                examModal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+                clearInterval(timerInterval);
+            }
+
+            function loadExamQuestion() {
+                if (!currentExam || currentQuestionIndex >= currentExam.questions.length) {
+                    finishExam();
+                    return;
+                }
+                
+                const question = currentExam.questions[currentQuestionIndex];
+                const examArea = document.getElementById('exam-area');
+                const isMarked = markedQuestions.includes(currentQuestionIndex);
+                
+                examArea.innerHTML = `
+                    <div class="question-container">
+                        <div class="question-text">${currentQuestionIndex + 1}. ${question.question}</div>
+                        <div class="options-grid">
+                            ${question.options.map((option, index) => `
+                                <button class="option-btn touch-feedback ${userAnswers[currentQuestionIndex] === index ? 'selected' : ''}" 
+                                        data-index="${index}">
+                                    ${option}
+                                </button>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+                
+                document.getElementById('question-count').textContent = `${currentQuestionIndex + 1}/${currentExam.questions.length}`;
+                
+                // Mettre à jour le bouton de marquage
+                const markBtn = document.getElementById('mark-question');
+                if (isMarked) {
+                    markBtn.innerHTML = '<i class="fas fa-bookmark"></i> Démarquer';
+                    markBtn.classList.remove('btn-info');
+                    markBtn.classList.add('btn-warning');
+                } else {
+                    markBtn.innerHTML = '<i class="far fa-bookmark"></i> Marquer';
+                    markBtn.classList.remove('btn-warning');
+                    markBtn.classList.add('btn-info');
+                }
+                
+                // Ajouter les événements aux boutons d'options
+                const optionBtns = examArea.querySelectorAll('.option-btn');
+                optionBtns.forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const selectedIndex = parseInt(this.getAttribute('data-index'));
+                        selectAnswer(selectedIndex);
+                    });
+                });
+                
+                // Ajouter l'événement au bouton de marquage
+                markBtn.addEventListener('click', toggleMarkQuestion);
+                
+                // Gérer les boutons de navigation
+                const prevBtn = document.getElementById('prev-question');
+                const nextBtn = document.getElementById('next-question');
+                
+                prevBtn.style.display = currentQuestionIndex === 0 ? 'none' : 'flex';
+                nextBtn.innerHTML = currentQuestionIndex === currentExam.questions.length - 1 ? 'Terminer <i class="fas fa-check"></i>' : 'Suivant <i class="fas fa-arrow-right"></i>';
+                
+                prevBtn.onclick = goToPreviousQuestion;
+                nextBtn.onclick = goToNextQuestion;
+            }
+
+            function selectAnswer(selectedIndex) {
+                userAnswers[currentQuestionIndex] = selectedIndex;
+                
+                // Mettre à jour l'interface
+                const optionBtns = document.querySelectorAll('.option-btn');
+                optionBtns.forEach(btn => {
+                    btn.classList.remove('selected');
+                    if (parseInt(btn.getAttribute('data-index')) === selectedIndex) {
+                        btn.classList.add('selected');
+                    }
+                });
+            }
+
+            function toggleMarkQuestion() {
+                const index = currentQuestionIndex;
+                if (markedQuestions.includes(index)) {
+                    markedQuestions = markedQuestions.filter(i => i !== index);
+                } else {
+                    markedQuestions.push(index);
+                }
+                
+                // Mettre à jour le bouton
+                const markBtn = document.getElementById('mark-question');
+                if (markedQuestions.includes(index)) {
+                    markBtn.innerHTML = '<i class="fas fa-bookmark"></i> Démarquer';
+                    markBtn.classList.remove('btn-info');
+                    markBtn.classList.add('btn-warning');
+                } else {
+                    markBtn.innerHTML = '<i class="far fa-bookmark"></i> Marquer';
+                    markBtn.classList.remove('btn-warning');
+                    markBtn.classList.add('btn-info');
+                }
+            }
+
+            function goToPreviousQuestion() {
+                if (currentQuestionIndex > 0) {
+                    currentQuestionIndex--;
+                    loadExamQuestion();
+                }
+            }
+
+            function goToNextQuestion() {
+                if (currentQuestionIndex < currentExam.questions.length - 1) {
+                    currentQuestionIndex++;
+                    loadExamQuestion();
+                } else {
+                    finishExam();
+                }
+            }
+
+            function startTimer() {
+                timeLeft = currentExam.duration * 60; // Convertir en secondes
+                const timerProgress = document.getElementById('timer-progress');
+                const timerValue = document.getElementById('timer-value');
+                
+                updateTimerDisplay();
+                
+                clearInterval(timerInterval);
+                timerInterval = setInterval(() => {
+                    timeLeft--;
+                    updateTimerDisplay();
+                    
+                    // Mettre à jour la barre de progression
+                    const totalTime = currentExam.duration * 60;
+                    const percentage = (timeLeft / totalTime) * 100;
+                    timerProgress.style.width = `${percentage}%`;
+                    
+                    // Changer la couleur quand le temps est presque écoulé
+                    if (timeLeft <= 300) { // 5 minutes
+                        timerProgress.style.background = '#ffc107';
+                    }
+                    
+                    if (timeLeft <= 60) { // 1 minute
+                        timerProgress.style.background = '#dc3545';
+                    }
+                    
+                    if (timeLeft <= 0) {
+                        clearInterval(timerInterval);
+                        finishExam();
+                    }
+                }, 1000);
+                
+                function updateTimerDisplay() {
+                    const minutes = Math.floor(timeLeft / 60);
+                    const seconds = timeLeft % 60;
+                    timerValue.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                }
+            }
+
+            function finishExam() {
+                clearInterval(timerInterval);
+                
+                // Calculer le score
+                let correctAnswers = 0;
+                currentExam.questions.forEach((question, index) => {
+                    if (userAnswers[index] === question.correctAnswer) {
+                        correctAnswers++;
+                    }
+                });
+                
+                score = Math.round((correctAnswers / currentExam.questions.length) * 100);
+                const isPassed = score >= currentExam.passingGrade;
+                
+                // Calculer le temps utilisé
+                const endTime = new Date();
+                const timeUsed = Math.floor((endTime - examStartTime) / 1000); // en secondes
+                const minutesUsed = Math.floor(timeUsed / 60);
+                const secondsUsed = timeUsed % 60;
+                const timeUsedStr = `${minutesUsed.toString().padStart(2, '0')}:${secondsUsed.toString().padStart(2, '0')}`;
+                
+                // Afficher les résultats
+                showResults(isPassed, score, correctAnswers, timeUsedStr);
+            }
+
+            function showResults(isPassed, score, correctAnswers, timeUsed) {
+                const resultIcon = document.getElementById('result-icon');
+                const resultTitle = document.getElementById('result-title');
+                const resultScore = document.getElementById('result-score');
+                const resultMessage = document.getElementById('result-message');
+                const detailScore = document.getElementById('detail-score');
+                const detailPassing = document.getElementById('detail-passing');
+                const detailTime = document.getElementById('detail-time');
+                const detailCorrect = document.getElementById('detail-correct');
+                const detailIncorrect = document.getElementById('detail-incorrect');
+                
+                // Mettre à jour les icônes et couleurs
+                if (isPassed) {
+                    resultIcon.className = 'result-icon success';
+                    resultIcon.innerHTML = '<i class="fas fa-trophy"></i>';
+                    resultTitle.textContent = 'Examen Réussi !';
+                    resultTitle.style.color = '#28a745';
+                    resultMessage.textContent = 'Félicitations ! Vous avez réussi l\'examen avec succès.';
+                } else {
+                    resultIcon.className = 'result-icon danger';
+                    resultIcon.innerHTML = '<i class="fas fa-times-circle"></i>';
+                    resultTitle.textContent = 'Examen Échoué';
+                    resultTitle.style.color = '#dc3545';
+                    resultMessage.textContent = 'Ne vous découragez pas ! Consultez vos erreurs et réessayez.';
+                }
+                
+                // Mettre à jour les scores
+                resultScore.textContent = `${score}%`;
+                detailScore.textContent = `${correctAnswers}/${currentExam.questions.length}`;
+                detailPassing.textContent = `${currentExam.passingGrade}% (${Math.ceil(currentExam.questions.length * currentExam.passingGrade / 100)}/${currentExam.questions.length})`;
+                detailTime.textContent = timeUsed;
+                detailCorrect.textContent = correctAnswers;
+                detailIncorrect.textContent = currentExam.questions.length - correctAnswers;
+                
+                // Afficher le modal de résultat
+                hideExamModal();
+                resultModal.style.display = 'flex';
+            }
+
+            function hideResultModal() {
+                resultModal.style.display = 'none';
+            }
+
+            function reviewExam() {
+                hideResultModal();
+                // Ici, vous pourriez implémenter une vue de révision des réponses
+                showToast('Fonctionnalité de révision à implémenter', 'info');
+            }
+
+            function editExam(examId) {
+                const exam = exams.find(e => e.id === examId);
+                if (!exam) return;
+                
+                currentEditingExam = exam;
+                
+                document.getElementById('form-title').textContent = 'Modifier l\'examen';
+                document.getElementById('exam-title').value = exam.title;
+                document.getElementById('exam-category').value = exam.category;
+                document.getElementById('exam-description').value = exam.description;
+                document.getElementById('exam-level').value = exam.level;
+                document.getElementById('exam-duration').value = exam.duration;
+                document.getElementById('exam-question-count').value = exam.questionCount;
+                document.getElementById('exam-passing-grade').value = exam.passingGrade;
+                document.getElementById('exam-instructions').value = exam.instructions;
+                
+                // Charger les questions
+                questionsContainer.innerHTML = '';
+                exam.questions.forEach((q, index) => {
+                    const questionId = Date.now() + index;
+                    const questionHTML = `
+                        <div class="question-item" data-id="${questionId}">
+                            <div class="question-header">
+                                <h4>Question ${index + 1}</h4>
+                                <div class="question-actions">
+                                    <button type="button" class="btn btn-danger delete-question-btn touch-feedback">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <input type="text" class="form-input question-text" value="${q.question}" placeholder="Entrez la question">
+                            </div>
+                            <div class="form-group">
+                                <textarea class="form-textarea explanation-text" placeholder="Explication (optionnelle)">${q.explanation || ''}</textarea>
+                            </div>
+                            <div class="options-list">
+                                ${q.options.map((option, optIndex) => `
+                                    <div class="option-item">
+                                        <input type="radio" name="correct-${questionId}" value="${optIndex}" 
+                                            ${optIndex === q.correctAnswer ? 'checked' : ''} class="correct-option">
+                                        <input type="text" class="form-input option-text" value="${option}" placeholder="Option ${optIndex + 1}">
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                    
+                    questionsContainer.insertAdjacentHTML('beforeend', questionHTML);
+                    
+                    // Ajouter l'événement de suppression pour cette question
+                    const newQuestion = questionsContainer.querySelector(`[data-id="${questionId}"]`);
+                    const deleteBtn = newQuestion.querySelector('.delete-question-btn');
+                    deleteBtn.addEventListener('click', function() {
+                        newQuestion.remove();
+                    });
+                });
+                
+                adminExamForm.style.display = 'block';
+                adminExamForm.scrollIntoView({ behavior: 'smooth' });
+            }
+
+            function showDeleteModal(examId) {
+                currentEditingExam = exams.find(e => e.id === examId);
+                if (!currentEditingExam) return;
+                
+                deleteModal.style.display = 'flex';
+            }
+
+            function hideDeleteModal() {
+                deleteModal.style.display = 'none';
+                currentEditingExam = null;
+            }
+
+            function confirmDeleteExam() {
+                if (!currentEditingExam) return;
+                
+                const index = exams.findIndex(e => e.id === currentEditingExam.id);
+                if (index !== -1) {
+                    exams.splice(index, 1);
+                    saveExams();
+                    loadExams();
+                    hideDeleteModal();
+                    showToast('Examen supprimé avec succès !', 'success');
+                }
+            }
+
+            function saveExams() {
+                localStorage.setItem('educationalExams', JSON.stringify(exams));
+            }
+            
+            function showToast(message, type = 'success') {
+                toast.textContent = message;
+                toast.className = 'toast show';
+                toast.classList.add(type);
+                
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                    setTimeout(() => {
+                        toast.className = 'toast';
+                    }, 300);
+                }, 3000);
+            }
+        });
+    </script>
+</body>
+</html>
